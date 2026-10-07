@@ -43,6 +43,11 @@ describe('cartLinesReducer', () => {
     expect(cartLinesReducer(lines, { type: 'setQuantity', key, quantity: 0 })).toEqual([])
   })
 
+  it('returns the same array when clearing an empty cart (no needless re-render)', () => {
+    const empty: CartLine[] = []
+    expect(cartLinesReducer(empty, { type: 'clear' })).toBe(empty)
+  })
+
   it('removes, clears and replaces', () => {
     const lines = add(add([], 'french-fries'), 'onion-rings')
     expect(cartLinesReducer(lines, { type: 'remove', key: 'french-fries' })).toHaveLength(1)

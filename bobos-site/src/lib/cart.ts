@@ -58,7 +58,7 @@ export function cartLinesReducer(lines: CartLine[], action: CartAction): CartLin
     case 'remove':
       return lines.filter((line) => line.key !== action.key)
     case 'clear':
-      return []
+      return lines.length === 0 ? lines : []
     case 'replace':
       return action.lines
   }

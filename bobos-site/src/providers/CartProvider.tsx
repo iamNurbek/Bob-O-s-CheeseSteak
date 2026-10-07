@@ -34,8 +34,11 @@ function reducer(state: CartState, action: Action): CartState {
       return { ...state, fulfillment: action.fulfillment }
     case 'setTip':
       return { ...state, tip: action.tip }
-    default:
-      return { ...state, lines: cartLinesReducer(state.lines, action) }
+    default: {
+      const lines = cartLinesReducer(state.lines, action)
+      // Returning the same state object lets React skip re-rendering consumers.
+      return lines === state.lines ? state : { ...state, lines }
+    }
   }
 }
 
@@ -82,9 +85,27 @@ export function CartProvider({ children }: Props) {
     return { isFirstAdd }
   }, [])
 
+  // Actions never change identity, so consumers can safely list them as effect dependencies.
+  const actions = useMemo(
+    () => ({
+      addItem,
+      setQuantity: (key: string, quantity: number) =>
+        dispatch({ type: 'setQuantity', key, quantity }),
+      removeLine: (key: string) => dispatch({ type: 'remove', key }),
+      clearCart: () => dispatch({ type: 'clear' }),
+      setFulfillment: (fulfillment: FulfillmentMethod) =>
+        dispatch({ type: 'setFulfillment', fulfillment }),
+      setTip: (tip: TipSelection) => dispatch({ type: 'setTip', tip }),
+      openDrawer: () => setIsDrawerOpen(true),
+      closeDrawer: () => setIsDrawerOpen(false),
+    }),
+    [addItem],
+  )
+
   const value = useMemo<CartContextValue>(() => {
     const lines = priceLines(state.lines, MENU_ITEMS)
     return {
+      ...actions,
       lines,
       itemCount: countItems(lines),
       totals: calculateTotals(lines, state.tip),
@@ -92,16 +113,8 @@ export function CartProvider({ children }: Props) {
       tip: state.tip,
       isHydrated: state.isHydrated,
       isDrawerOpen,
-      addItem,
-      setQuantity: (key, quantity) => dispatch({ type: 'setQuantity', key, quantity }),
-      removeLine: (key) => dispatch({ type: 'remove', key }),
-      clearCart: () => dispatch({ type: 'clear' }),
-      setFulfillment: (fulfillment) => dispatch({ type: 'setFulfillment', fulfillment }),
-      setTip: (tip) => dispatch({ type: 'setTip', tip }),
-      openDrawer: () => setIsDrawerOpen(true),
-      closeDrawer: () => setIsDrawerOpen(false),
     }
-  }, [state, isDrawerOpen, addItem])
+  }, [state, isDrawerOpen, actions])
 
   return <CartContext value={value}>{children}</CartContext>
 }
