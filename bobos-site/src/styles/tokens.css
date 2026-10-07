@@ -16,7 +16,7 @@
   --primary-strong: #8e1b16;
   --accent: #f5a524;
   --on-accent: #2b1a14;
-  --accent-text: #b34700;
+  --accent-text: #a34100; /* plan had #b34700; darkened to pass AA on --surface-alt */
   --border: #e8d7c3;
   --focus: #1f5fbf;
   --scrim: rgb(23 16 13 / 0.55);

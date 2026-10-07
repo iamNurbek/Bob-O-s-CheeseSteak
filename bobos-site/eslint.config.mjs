@@ -19,6 +19,7 @@ const eslintConfig = defineConfig([
           groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index']],
           pathGroups: [
             { pattern: '@/**', group: 'internal' },
+            { pattern: '@tests/**', group: 'internal' },
             {
               pattern: '*.css',
               group: 'index',

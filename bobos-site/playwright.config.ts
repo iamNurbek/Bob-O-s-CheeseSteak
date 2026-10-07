@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 
-const PORT = 3100
+const PORT = Number(process.env.PORT ?? (process.env.CI ? 3100 : 3000))
 const isCI = Boolean(process.env.CI)
 
 /** Every browser test runs in both themes, on desktop and mobile. */

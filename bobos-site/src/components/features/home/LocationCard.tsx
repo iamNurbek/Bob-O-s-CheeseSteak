@@ -1,3 +1,4 @@
+import { LocationMap } from '@/components/features/home/LocationMap'
 import { Card } from '@/components/ui/Card'
 import { Icon } from '@/components/ui/Icon'
 import { FULL_ADDRESS, SITE } from '@/data/site'
@@ -9,13 +10,7 @@ export function LocationCard() {
         <Icon name="pin" className="text-primary" />
         Location
       </h3>
-      <iframe
-        title={`Map showing ${SITE.name} at ${FULL_ADDRESS}`}
-        src={SITE.mapEmbedUrl}
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-        className="aspect-[4/3] w-full rounded-control border border-border"
-      />
+      <LocationMap />
       <address className="flex flex-col gap-2 not-italic">
         <span className="font-semibold">{FULL_ADDRESS}</span>
         <a
