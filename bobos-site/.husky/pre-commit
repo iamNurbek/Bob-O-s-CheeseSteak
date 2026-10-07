@@ -1,0 +1,1 @@
+cd bobos-site && npx lint-staged

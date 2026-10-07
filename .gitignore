@@ -1,0 +1,13 @@
+.DS_Store
+node_modules/
+.next/
+out/
+coverage/
+.env*.local
+.env
+!.env.example
+test-results/
+playwright-report/
+blob-report/
+.lighthouseci/
+*.tsbuildinfo
