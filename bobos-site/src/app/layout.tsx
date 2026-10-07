@@ -5,6 +5,7 @@ import { CartDrawer } from '@/components/features/cart/CartDrawer'
 import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
 import { MAIN_CONTENT_ID, SkipLink } from '@/components/layout/SkipLink'
+import { BRAND_HEX } from '@/constants/brand'
 import { SITE } from '@/data/site'
 import { CartProvider } from '@/providers/CartProvider'
 import { ThemeProvider } from '@/providers/ThemeProvider'
@@ -35,8 +36,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fff6e9' },
-    { media: '(prefers-color-scheme: dark)', color: '#17100d' },
+    { media: '(prefers-color-scheme: light)', color: BRAND_HEX.bgLight },
+    { media: '(prefers-color-scheme: dark)', color: BRAND_HEX.bgDark },
   ],
 }
 

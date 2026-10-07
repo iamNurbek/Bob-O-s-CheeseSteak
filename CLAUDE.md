@@ -26,9 +26,12 @@ Full spec: [bobos-website-plan.md](bobos-website-plan.md). Source menu: `Menu & 
 | All static + unit gates | `npm run check` (format:check, lint, typecheck, vitest) |
 | Unit/component/API tests | `npm test` (`npm run test:watch`) |
 | E2E / a11y / visual | `npm run test:e2e`, `npm run test:a11y`, `npm run test:visual` (Playwright, port 3100) |
-| Lighthouse | `npm run build && npm run lhci` |
+| Lighthouse | `npm run build && npm run lhci` (set `CHROME_PATH` to Playwright's Chromium if Chrome isn't installed) |
 
 Playwright projects: `desktop-light`, `desktop-dark`, `mobile-light`, `mobile-dark` (every browser test runs in both themes).
+Locally Playwright reuses the dev server on **port 3000** (start `npm run dev` first or it starts one); CI builds and serves on 3100.
+Mobile projects run WebKit, which doesn't Tab to links, so the skip-link test is skipped there.
+Test helpers import via the `@tests/*` alias (`tests/support/helpers.ts`).
 
 ## Scope
 - **v1:** Home, About, Menu, Cart (+ header cart drawer), dummy Stripe checkout, order success/cancel, 404/error, light/dark/system theme.
@@ -39,7 +42,10 @@ Playwright projects: `desktop-light`, `desktop-dark`, `mobile-light`, `mobile-da
 - Phone **201-870-6065**. Hours **11AM–8PM**; the menu doesn't list days, so `data/hours.ts` assumes daily. **Confirm with the user.**
 - Prices come from an older sheet: label them "sample prices".
 - Photos are placeholders in v1: use the single `ImagePlaceholder` (`aspect-[4/3]`, `bg-surface-alt`, `aria-hidden`).
-- No logo file yet: the header uses a text wordmark.
+- No logo file yet: the header uses a text wordmark and `app/icon.svg` is a simple "B" favicon.
+- The Google Maps iframe mounts only when scrolled into view (`LocationMap`); it costs ~450 KB and dropped home perf to 83.
+- Option groups (`types/menu.ts`) drive Build Your Own, shake flavors, salad add-ons and cheesesteak extras.
+  BYO toppings: 3 included, up to 7, +$0.49 each beyond 3 (from the printed menu).
 
 ## Architecture rules
 - `src/app/` = routing only (thin pages). `components/ui/` = generic primitives that **never** import feature code, `data/` or `providers/` (ESLint enforces this).
@@ -58,6 +64,8 @@ Playwright projects: `desktop-light`, `desktop-dark`, `mobile-light`, `mobile-da
 - Tokens are defined once in `src/styles/tokens.css` (`:root` = light, `[data-theme='dark']` = dark) and mapped in `src/styles/globals.css` `@theme inline`.
 - Use only semantic classes: `bg-bg`, `bg-surface`, `bg-surface-alt`, `text-text`, `text-muted`, `bg-primary`, `text-on-primary`, `bg-primary-strong`, `bg-accent`, `text-on-accent`, `text-accent-text`, `border-border`, `outline-focus`, `bg-scrim`, `shadow-card`, `rounded-card`, `rounded-control`, `max-w-content`, `font-display`.
 - **Never** use raw hex, inline styles, default palette colors (`bg-red-600`), or `dark:` variants for brand colors.
+- Light `--accent-text` is **#a34100** (the plan said #b34700, which fails AA on `--surface-alt`).
+- Raw hex is allowed only in `constants/brand.ts` (OG image, theme-color), mirroring tokens.css.
 - Never put white text on orange: use `text-on-accent` on `bg-accent`, and `text-accent-text` for orange text.
 - `next-themes` with `attribute="data-theme"`, `defaultTheme="system"`. The ThemeToggle icon renders only after mount (`useMounted`).
 
@@ -78,7 +86,12 @@ Playwright projects: `desktop-light`, `desktop-dark`, `mobile-light`, `mobile-da
 - Tip selector and fulfillment toggle use radio-group semantics and work with the keyboard. Labeled fields with clear errors.
 - Map iframe has a `title` plus a text address fallback. Respect `prefers-reduced-motion` and `prefers-color-scheme`.
 
+## Git
+- Remote: https://github.com/iamNurbek/Bob-O-s-CheeseSteak.git (`main`). Repo-local identity: iamNurbek / GitHub noreply email.
+- Commit (Conventional Commits) and push after every meaningful, passing change; run `npm run check` first.
+- Pushing needs `gh auth login` + `gh auth setup-git` (gh is installed in `~/.local/bin`).
+
 ## Build progress
-- [x] Phase 0–1: environment, scaffold, tooling, tokens, ThemeProvider, test harness, CI
-- [ ] Phase 2: UI kit  · [ ] 3: Layout  · [ ] 4: Static pages + data  · [ ] 5: Cart/interactive
-- [ ] 6: Checkout  · [ ] 7: QA  · [ ] 8: Polish
+- [x] Phases 0–8 of the v1 plan (foundation, UI kit, layout, pages, cart, checkout, QA, polish)
+- [ ] Open: confirm the days the shop is open (hours assume daily); real photos/logo; optional Stripe test mode
+- [ ] v2: reservations/catering (deferred), admin, database, email
